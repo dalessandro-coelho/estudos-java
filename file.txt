@@ -1,2 +1,1 @@
-Aprendendo FileWriter
-Dando continuidade aprendendo FileWriter
+Aprendendo BufferedWriter
