@@ -1,6 +1,7 @@
 package academy.devdojo.maratonajava.javacore.Xserializacao.test;
 
 import academy.devdojo.maratonajava.javacore.Xserializacao.dominio.Aluno;
+import academy.devdojo.maratonajava.javacore.Xserializacao.dominio.Turma;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,7 +16,9 @@ public class SerializacaoTest01 {
         //Serialization -> Converte um objeto Java em bytes para armazenamento ou transmissão.
 
         Aluno aluno = new Aluno(1L,"Dalessandro Coelho", "123456789");
-//        serializar(aluno);
+        Turma turma = new Turma("Maratona Java Virado no Jiraya em Breve Ricos");
+        aluno.setTurma(turma);
+        serializar(aluno);
         deserializar();
     }
 
