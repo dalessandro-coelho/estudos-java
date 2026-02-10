@@ -4,7 +4,6 @@ import java.io.*;
 
 public class Aluno implements Serializable {
     // serialVersionUID -> Garante a compatibilidade entre versões da classe serializada.
-    @Serial
     private static final long serialVersionUID = 739959230178355186L;
     private Long id;
     private String nome;
@@ -20,8 +19,6 @@ public class Aluno implements Serializable {
         this.password = password;
     }
 
-    //
-    @Serial
     private void writeObject(ObjectOutputStream oos){
         try {
             oos.defaultWriteObject();
@@ -31,7 +28,6 @@ public class Aluno implements Serializable {
         }
     }
 
-    @Serial
     private void readObject(ObjectInputStream ois){
         try {
             ois.defaultReadObject();
