@@ -14,17 +14,17 @@ public class EqualsTest01 {
         Smartphone s2 = new Smartphone("1ABC1", "iPhone");
         System.out.println(s1.equals(s2)); // false
 
-        Smartphone s3 = new Smartphone("1ABC1", "iPhone");
-        Smartphone s4 = s3;
-        System.out.println(s3.equals(s4)); // true
-
-        String nome = "Dalessandro Coelho";
-        String nome2 = "Dalessandro Coelho";
-        System.out.println(nome == nome2); // true
-
-        String nome3 = "Dalessandro Coelho";
-        String nome4 = new String("Dalessandro Coelho");
-        System.out.println(nome3 == nome4); // false
-        System.out.println(nome3.equals(nome4)); // true
+//        Smartphone s3 = new Smartphone("1ABC1", "iPhone");
+//        Smartphone s4 = s3;
+//        System.out.println(s3.equals(s4)); // true
+//
+//        String nome = "Dalessandro Coelho";
+//        String nome2 = "Dalessandro Coelho";
+//        System.out.println(nome == nome2); // true
+//
+//        String nome3 = "Dalessandro Coelho";
+//        String nome4 = new String("Dalessandro Coelho");
+//        System.out.println(nome3 == nome4); // false
+//        System.out.println(nome3.equals(nome4)); // true
     }
 }
