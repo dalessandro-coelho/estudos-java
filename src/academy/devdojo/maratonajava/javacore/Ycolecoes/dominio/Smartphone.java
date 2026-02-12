@@ -25,6 +25,19 @@ public class Smartphone {
         return serialNumber != null && serialNumber.equals(smartphone.serialNumber); // Parte essencial dessa garantia.
     }
 
+    // hasCode() -> É um método que retorna um número inteiro representando o objeto.
+
+    // Dois objetos iguais pelo "equals()", eles DEVEM ter o mesmo "hashCode()".
+    // Dois objetos iguais pelo "hashCode", podem ser ou não iguais, por isso usa "equals()" para diferenciar(Chamado de colisão de hash).
+    // Dois objetos diferentes pelo "equals()", podem ou não ter o mesmo "hashCode()".
+    // Dois objetos diferentes pelo "hashCode", o "equals()" é diferente.
+    // hashCode() filtra e equals() confirma.
+    @Override
+    public int hashCode() {
+        // return serialNumber == null ? 0 : this.serialNumber.hashCode(); // É bom verificar se é nulo antes de chamar o hasCode(), para evitar NullPointException.
+        return this.serialNumber.hashCode();
+    }
+
     public String getMarca() {
         return marca;
     }
