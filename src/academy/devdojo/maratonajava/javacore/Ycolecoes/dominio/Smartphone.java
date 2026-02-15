@@ -4,9 +4,9 @@ public class Smartphone {
     private String serialNumber;
     private String marca;
 
-    public Smartphone(String marca, String serialNumber) {
-        this.marca = marca;
+    public Smartphone(String serialNumber, String marca) {
         this.serialNumber = serialNumber;
+        this.marca = marca;
     }
 
     // Para que o Java aceite a implementação como válida, deve seguir estes princípios:
@@ -36,6 +36,16 @@ public class Smartphone {
     public int hashCode() {
         // return serialNumber == null ? 0 : this.serialNumber.hashCode(); // É bom verificar se é nulo antes de chamar o hasCode(), para evitar NullPointException.
         return this.serialNumber.hashCode();
+    }
+
+    // Deve sobrescrever este metodo, para que, ao imprimir a lista,
+    // os detalhes do objeto (marca, serial) apareçam de forma legível em vez do endereço de memória.
+    @Override
+    public String toString() {
+        return "Smartphone{" +
+                "serialNumber='" + serialNumber + '\'' +
+                ", marca='" + marca + '\'' +
+                '}';
     }
 
     public String getMarca() {
