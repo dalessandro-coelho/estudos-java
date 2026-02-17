@@ -2,7 +2,8 @@ package academy.devdojo.maratonajava.javacore.Ycolecoes.dominio;
 
 import java.util.Objects;
 
-public class Manga {
+//Ao implementar essa interface, é obrigatorio sobrescrever o metodo "compareTo".
+public class Manga implements Comparable<Manga>{
         private Long id;
         private String nome;
         private double preco;
@@ -58,5 +59,31 @@ public class Manga {
 
     public void setPreco(double preco) {
         this.preco = preco;
+    }
+
+    @Override
+    public int compareTo(Manga outroManga) {
+        // compareTo retorna 3 opções:
+        // 1 - Negativo se o this < outroManga
+        // 2 - Se this == outroManga, return 0
+        // 3 - Negativo se o this > outroManga
+
+        // Forma de fazer Manualmente utilizando "if-else" (Não é aconselhavel fazer dessa forma).
+//        if (this.id < outroManga.getId()){
+//            return -1;
+//        } else if (this.id.equals(outroManga.getId())) {
+//            return 0;
+//        } else {
+//            return 1;
+//        }
+        //Outra forma de fazer, pois como é um tipo Long (Wrappers), já vem o "compareTo" implementado nele.
+//        return this.id.compareTo(outroManga.getId());
+
+        // Para tipos primitivos como double (que não têm métodos),pode usar o metodo estático da classe Wrapper (Duas formas de fazer).
+//        return Double.compare(preco , outroManga.getPreco());
+//        return Double.valueOf(preco).compareTo(outroManga.getPreco());
+
+        // Para tipos "String".
+        return this.nome.compareTo(outroManga.getNome());
     }
 }
