@@ -53,8 +53,44 @@ Os códigos representam prática ativa, com adaptações e refatorações confor
 ⭐ Classes Utilitárias
 
 - String, StringBuilder, StringBuffer
+
+- Wrappers (Integer, Double, Boolean, etc.)
+
+- Autoboxing e Unboxing
+
 - Datas (Date, Calendar, java.time)
+
+- LocalDate, LocalTime, LocalDateTime
+
+- Instant
+
+- Duration e Period
+
+- Formatação de datas (DateTimeFormatter)
+
+- Internacionalização (Locale)
+
 - Expressões regulares (Pattern, Matcher)
+
+- IO
+
+    - File
+
+    - FileReader e FileWriter
+
+    - BufferedReader e BufferedWriter
+
+    - Leitura e escrita de arquivos texto
+
+- NIO
+
+    - Path
+
+    - Paths
+
+    - Files
+
+    - Criação, cópia, movimentação e exclusão de arquivos
 
 ---
 
