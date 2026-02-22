@@ -4,12 +4,16 @@ import academy.devdojo.maratonajava.javacore.Ycolecoes.dominio.Manga;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class IteratorTest01 {
     public static void main(String[] args) {
 
         //Iterator -> Permite percorrer e remover elementos de uma coleção de forma segura, evitando "ConcurrentModificationException".
+
+        // Também poderia usar "LinkedList", que no caso de fazer muita remoção, é melhor usar ele.
+//        List<Manga> mangas = new LinkedList<>(); //
 
         List<Manga> mangas = new ArrayList<>(6);
         mangas.add(new Manga(5L, "Berserk", 19.9, 0));
