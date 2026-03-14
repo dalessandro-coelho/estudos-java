@@ -12,14 +12,14 @@ public class ComportamentoPorParametroTest02 {
 
     public static void main(String[] args) {
 
-        // Filtrando da lista "cars" apenas os carros que são verdes.
+        // Filtrando da lista "cars" apenas os carros que são verdes(Utilizando classe anonima).
 //        List<Car> greenCars = filter(cars, new CarPredicate() {
 //            @Override
 //            public boolean test(Car car) {
 //                return car.getColor().equals("green");
 //            }
 //        });
-        // Outra forma de fazer, mas  resumido:
+        // Outra forma de fazer, mas  resumido (Utilizando Lambdas):
         List<Car> greenCars = filter(cars, car -> car.getColor().equals("green"));
         System.out.println(greenCars);
 
