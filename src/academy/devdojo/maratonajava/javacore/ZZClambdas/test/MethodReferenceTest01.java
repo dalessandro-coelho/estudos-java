@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Reference to a static method
+// Referência a um metodo estático
 public class MethodReferenceTest01 {
     public static void main(String[] args) {
 
