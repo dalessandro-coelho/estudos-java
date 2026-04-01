@@ -1,4 +1,4 @@
-package academy.devdojo.maratonajava.javacore;
+package academy.devdojo.maratonajava.javacore.ZZEstreams.test;
 
 import java.io.IOException;
 import java.nio.file.Files;
