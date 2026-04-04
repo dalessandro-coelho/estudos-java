@@ -30,7 +30,7 @@ public class StreamTest13 {
         //Se o preço for menor que 6, o anime entra na chave UNDER_PROMOTION. Caso contrário, entra em NORMAL_PRICE.
         Map<Promotion, List<LightNovel>> collect = lightNovels
                 .stream()
-                .collect(groupingBy(ln -> ln.getPrice() < 6 ? UNDER_PROMOTION : NORMAL_PRICE
+                .collect(groupingBy(StreamTest13::getPromotion
                 ));
         System.out.println(collect);
 
@@ -39,8 +39,12 @@ public class StreamTest13 {
         //Os animes são agrupados primeiro por Categoria e, dentro de cada categoria, agrupados novamente por Promoção.
         Map<Category, Map<Promotion, List<LightNovel>>> collect1 = lightNovels
                 .stream()
-                .collect(groupingBy(LightNovel::getCategory, groupingBy(ln -> ln.getPrice() < 6 ? UNDER_PROMOTION : NORMAL_PRICE
+                .collect(groupingBy(LightNovel::getCategory, groupingBy(StreamTest13::getPromotion
                 )));
         System.out.println(collect1);
+    }
+
+    private static Promotion getPromotion(LightNovel ln) {
+        return ln.getPrice() < 6 ? UNDER_PROMOTION : NORMAL_PRICE;
     }
 }
