@@ -36,6 +36,12 @@ class ThreadExampleRunnable implements Runnable{
             if (i % 100 == 0){
                 System.out.println();
             }
+            //Thread.sleep: Suspende a execução da thread em execução por um período especificado (Obriga o uso de um bloco try-catch).
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
@@ -51,11 +57,15 @@ public class ThreadTest01 {
 //        ThreadExample t3 = new ThreadExample('C');
 //        ThreadExample t4 = new ThreadExample('D');
 
-        Thread t1 = new Thread (new ThreadExampleRunnable('A'));
-        Thread t2 = new Thread (new ThreadExampleRunnable('B'));
-        Thread t3 = new Thread (new ThreadExampleRunnable('C'));
-        Thread t4 = new Thread (new ThreadExampleRunnable('D'));
+        //É possível dar nomes personalizados às threads(Facilita a identificação de qual thread está executando determinado bloco de código).
+        Thread t1 = new Thread (new ThreadExampleRunnable('A'), "T1A");
+        Thread t2 = new Thread (new ThreadExampleRunnable('B'), "T2B");
+        Thread t3 = new Thread (new ThreadExampleRunnable('C'), "T3C");
+        Thread t4 = new Thread (new ThreadExampleRunnable('D'), "T4D");
 
+        //É possível definir a prioridade de execução, que geralmente varia de 1 a 10.
+        //Mas não há garantia absoluta de que uma thread com prioridade 10 sempre terminará antes de uma com prioridade 1.
+        t4.setPriority(Thread.MAX_PRIORITY);
         //Se chamar o metodo run() diretamente, o código será executado de forma sequencial pela thread principal (main), sem paralelismo.
 //        t1.run();
 //        t2.run();
