@@ -1,4 +1,4 @@
-package academy.devdojo.maratonajava.javacore.ZZthreads.test;
+package academy.devdojo.maratonajava.javacore.ZZFthreads.test;
 
 //Extensão da classe Thread: Não é o ideal pois consome a única herança que o Java permite.
 class ThreadExample extends Thread{

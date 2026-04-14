@@ -1,4 +1,4 @@
-package academy.devdojo.maratonajava.javacore.ZZthreads.dominio;
+package academy.devdojo.maratonajava.javacore.ZZFthreads.dominio;
 
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;

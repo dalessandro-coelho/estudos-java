@@ -1,6 +1,6 @@
-package academy.devdojo.maratonajava.javacore.ZZthreads.test;
+package academy.devdojo.maratonajava.javacore.ZZFthreads.test;
 
-import academy.devdojo.maratonajava.javacore.ZZthreads.dominio.Account;
+import academy.devdojo.maratonajava.javacore.ZZFthreads.dominio.Account;
 
 public class ThreadAccountTest01 implements Runnable {
     //O objeto usado como Lock deve ser, preferencialmente, definido como "final".
