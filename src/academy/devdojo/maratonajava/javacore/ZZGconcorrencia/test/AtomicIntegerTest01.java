@@ -1,6 +1,8 @@
 package academy.devdojo.maratonajava.javacore.ZZGconcorrencia.test;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 class Counter{
 
@@ -8,10 +10,16 @@ class Counter{
 
     private int count;
     private AtomicInteger atomicInteger = new AtomicInteger();
+    private Lock lock = new ReentrantLock(true);
 
     void increment(){
-        count++;
-        atomicInteger.incrementAndGet(); //incrementAndGet(): Equivale ao ++count (incrementa e retorna o novo valor).
+        lock.lock();
+        try {
+            count++;
+            atomicInteger.incrementAndGet();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public int getCount(){
