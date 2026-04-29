@@ -3,6 +3,7 @@ package academy.devdojo.maratonajava.javacore.ZZGconcorrencia.service;
 import academy.devdojo.maratonajava.javacore.ZZGconcorrencia.dominio.Discount;
 import academy.devdojo.maratonajava.javacore.ZZGconcorrencia.dominio.Quote;
 
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +13,7 @@ public class StoreServiceWithDiscount {
         Discount.Code discountCode = Discount.Code.values()[
                 ThreadLocalRandom.current().nextInt(Discount.Code.values().length)
                 ];
-        return String.format("%s:%.2f:%s", storeName, price, discountCode);
+        return String.format(Locale.US,"%s:%.2f:%s", storeName, price, discountCode);
     }
 
     public String applyDiscount (Quote quote){
