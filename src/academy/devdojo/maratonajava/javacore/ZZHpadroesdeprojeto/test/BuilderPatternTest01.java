@@ -9,7 +9,8 @@ public class BuilderPatternTest01 {
         // Pessoa p = new Pessoa("William", "Suane", "ViradoNoJiraya", "William.suane@devdojo.academy");
 
         // Pode chamar métodos que dizem exatamente o que estás a definir:
-        Person build = new Person.PersonBuilder()
+        Person build = Person.PersonBuilder // não precisa do "new"
+                .builder()
                 .firstName("William")
                 .lastName("Suane")
                 .lastName("ViradoNoJiraya")
