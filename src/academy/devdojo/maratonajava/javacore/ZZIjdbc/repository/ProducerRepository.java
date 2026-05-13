@@ -32,4 +32,17 @@ public class ProducerRepository {
             log.error("Error while trying to delete producer '{}'", id, e);
         }
     }
+
+    //Atualizando o Banco de Dados (por id), onde segue a mesma estrutura, trocando só o comando.
+    public static void update(Producer producer) {
+        String sql = "UPDATE `anime_store`.`producer` SET `name` = '%s ' WHERE (`id` = '%d');"
+                .formatted(producer.getName(), producer.getId()); //Comando para atualizar por id
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement()) {
+            int rowsAffected = stmt.executeUpdate(sql);
+            log.info("Update producer '{}', rows affected '{}'", producer.getId(),rowsAffected);
+        } catch (SQLException e) {
+            log.error("Error while trying to update producer '{}'", producer.getId(), e);
+        }
+    }
 }
