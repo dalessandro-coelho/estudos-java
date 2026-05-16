@@ -4,10 +4,7 @@ import academy.devdojo.maratonajava.javacore.ZZIjdbc.com.ConnectionFactory;
 import academy.devdojo.maratonajava.javacore.ZZIjdbc.dominio.Producer;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,5 +72,28 @@ public class ProducerRepository {
             log.error("Error while trying to find all producer", e);
         }
         return producers;
+    }
+
+    //Descobrindo propriedades de uma tabela.
+    public static void showProducerMetadata() {
+        log.info("Showing Producer Metadata");
+        String sql = "SELECT * FROM anime_store.producer";
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            //ResultSetMetaData: Permite obter informações estruturais e metadados de um ResultSet, ou seja, pode descobrir dinamicamente o número de colunas, nomes e tipos de dados.
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+            rs.next();
+            int columnCount = rsMetaData.getColumnCount();
+            log.info("Columns count '{}'", columnCount); //columnCount: Contagem de colunas.
+            for (int i = 1; i <= columnCount; i++){ // No JDBC e no SQL a contagem das colunas começa em 1.
+                log.info("Table name '{}'", rsMetaData.getTableName(i)); //getTableName: Nome da tabela.
+                log.info("Column name '{}'", rsMetaData.getCatalogName(i)); //getCatalogName: Nome da coluna.
+                log.info("Column size '{}'", rsMetaData.getColumnDisplaySize(i)); //getColumnDisplaySize: Tamanho da coluna.
+                log.info("Column type '{}'", rsMetaData.getColumnTypeName(i)); //getColumnTypeName: Tipo de coluna.
+            }
+        } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
     }
 }
