@@ -51,16 +51,23 @@ public class ProducerRepository {
 
     public static List<Producer> findAll() {
         log.info("Finding all Producers");
-        String sql = "SELECT id, name FROM anime_store.producer;"; //Comando para buscar os dados.
+        return findByName("");
+    }
+
+    //Filtrando as pesquisas do banco de dados por nome.
+    public static List<Producer> findByName(String name) {
+        log.info("Finding Producer by name");
+        String sql = "SELECT * FROM anime_store.producer where name like '%%%s%%';"
+                .formatted(name);
         List<Producer> producers = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) { //ResultSet: Armazena e acessa dados retornados de um banco de dados, após uma consulta SQL. / executeQuery: É obrigatorio usar para ler os dados.
-            while (rs.next()) { //next: faz duas coisas, pula para a próxima linha e diz "true" se houver dados lá, ou "false" se a tabela acabou.
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
                 Producer producer = Producer
                         .builder()
-                        .id(rs.getInt("id")) //Pega o número da coluna ID.
-                        .name(rs.getString("name")) //Pega o texto da coluna Nome.
+                        .id(rs.getInt("id"))
+                        .name(rs.getString("name"))
                         .build();
                 producers.add(producer);
             }
