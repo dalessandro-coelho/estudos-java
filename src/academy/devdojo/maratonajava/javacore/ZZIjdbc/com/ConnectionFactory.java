@@ -12,6 +12,5 @@ public class ConnectionFactory {
         String password = "root"; //A senha definida na instalação ou no Docker
 
         return DriverManager.getConnection(url, username, password);
-
     }
 }

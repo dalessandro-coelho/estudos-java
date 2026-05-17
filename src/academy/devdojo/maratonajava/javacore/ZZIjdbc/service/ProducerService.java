@@ -29,8 +29,12 @@ public class ProducerService {
         return ProducerRepository.findByName(name);
     }
 
-    public static void showProducerMetadata(){
-        ProducerRepository.showProducerMetadata();
+    public static void showProducerMetaData(){
+        ProducerRepository.showProducerMetaData();
+    }
+
+    public static void showDriveMetaData(){
+        ProducerRepository.showDriveMetaData();
     }
 
     public static void requireValidId(Integer id){

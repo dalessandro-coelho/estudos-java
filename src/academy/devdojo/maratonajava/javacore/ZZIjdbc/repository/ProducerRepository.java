@@ -15,7 +15,7 @@ public class ProducerRepository {
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement()) {
             int rowsAffected = stmt.executeUpdate(sql);
-            log.info("Inserted producer '{}' in the database, rows affected '{}'", producer.getName(),rowsAffected);
+            log.info("Inserted producer '{}' in the database, rows affected '{}'", producer.getName(), rowsAffected);
         } catch (SQLException e) {
             log.error("Error while trying to insert producer '{}'", producer.getName(), e);
         }
@@ -27,7 +27,7 @@ public class ProducerRepository {
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement()) {
             int rowsAffected = stmt.executeUpdate(sql);
-            log.info("Deleted producer '{}' from the database, rows affected '{}'", id,rowsAffected);
+            log.info("Deleted producer '{}' from the database, rows affected '{}'", id, rowsAffected);
         } catch (SQLException e) {
             log.error("Error while trying to delete producer '{}'", id, e);
         }
@@ -40,7 +40,7 @@ public class ProducerRepository {
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement()) {
             int rowsAffected = stmt.executeUpdate(sql);
-            log.info("Update producer '{}', rows affected '{}'", producer.getId(),rowsAffected);
+            log.info("Update producer '{}', rows affected '{}'", producer.getId(), rowsAffected);
         } catch (SQLException e) {
             log.error("Error while trying to update producer '{}'", producer.getId(), e);
         }
@@ -75,7 +75,7 @@ public class ProducerRepository {
     }
 
     //Descobrindo propriedades de uma tabela.
-    public static void showProducerMetadata() {
+    public static void showProducerMetaData() {
         log.info("Showing Producer Metadata");
         String sql = "SELECT * FROM anime_store.producer";
         try (Connection conn = ConnectionFactory.getConnection();
@@ -83,16 +83,50 @@ public class ProducerRepository {
              ResultSet rs = stmt.executeQuery(sql)) {
             //ResultSetMetaData: Permite obter informações estruturais e metadados de um ResultSet, ou seja, pode descobrir dinamicamente o número de colunas, nomes e tipos de dados.
             ResultSetMetaData rsMetaData = rs.getMetaData();
-            rs.next();
             int columnCount = rsMetaData.getColumnCount();
             log.info("Columns count '{}'", columnCount); //columnCount: Contagem de colunas.
-            for (int i = 1; i <= columnCount; i++){ // No JDBC e no SQL a contagem das colunas começa em 1.
+            for (int i = 1; i <= columnCount; i++) { // No JDBC e no SQL a contagem das colunas começa em 1.
                 log.info("Table name '{}'", rsMetaData.getTableName(i)); //getTableName: Nome da tabela.
                 log.info("Column name '{}'", rsMetaData.getCatalogName(i)); //getCatalogName: Nome da coluna.
                 log.info("Column size '{}'", rsMetaData.getColumnDisplaySize(i)); //getColumnDisplaySize: Tamanho da coluna.
                 log.info("Column type '{}'", rsMetaData.getColumnTypeName(i)); //getColumnTypeName: Tipo de coluna.
             }
         } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
+    }
+
+    // Fazendo teste no Driver.
+    public static void showDriveMetaData() {
+        log.info("Showing Driver Metadata");
+        try (Connection conn = ConnectionFactory.getConnection()){
+            //DatabaseMetaData: Serve para perguntar diretamente ao driver se ele suporta determinados recursos avançados do JDBC antes de tentares usá-los e causar um erro no sistema.
+             DatabaseMetaData dbMetaData = conn.getMetaData();
+
+             //TYPE_FORWARD_ONLY: Determina que a leitura dos resultados de uma consulta ao banco de dados seja feita exclusivamente para a frente.
+             if(dbMetaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
+                log.info("Supports TYPE_FORWARD_ONLY");
+                if (dbMetaData.supportsResultSetConcurrency(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE)) {
+                    log.info("And Supports CONCUR_UPDATABLE");
+                }
+            }
+
+             //TYPE_SCROLL_INSENSITIVE: Permite navegar para a frente, para trás, saltar para o final ou ir para uma linha específica.
+             if(dbMetaData.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
+                log.info("Supports TYPE_SCROLL_INSENSITIVE");
+                if (dbMetaData.supportsResultSetConcurrency(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+                    log.info("And Supports CONCUR_UPDATABLE");
+                }
+            }
+
+             //TYPE_SCROLL_SENSITIVE: Igual ao anterior, mas se outra pessoa alterar um dado no banco de dados enquanto tem ResultSet aberto, é possível conseguir ver a alteração em tempo real sem fazer um novo SELECT.
+             if(dbMetaData.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE)) {
+                log.info("Supports TYPE_SCROLL_SENSITIVE");
+                if (dbMetaData.supportsResultSetConcurrency(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+                    log.info("And Supports CONCUR_UPDATABLE");
+                }
+            }
+        } catch(SQLException e){
             log.error("Error while trying to find all producer", e);
         }
     }
