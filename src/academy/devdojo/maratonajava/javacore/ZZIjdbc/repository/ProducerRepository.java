@@ -130,4 +130,46 @@ public class ProducerRepository {
             log.error("Error while trying to find all producer", e);
         }
     }
+
+    //Navegando de forma mais avançada no ResultSet
+    public static void showTypeScrollWorking() {
+        String sql = "SELECT * FROM anime_store.producer;";
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            log.info("Last row? '{}'", rs.last()); //.last(): Dá um salto direto para a última linha da tabela.
+            log.info("Row number? '{}'", rs.getRow()); //getRow: Devolve o número da linha exata onde o cursor está posicionado naquele momento.
+            log.info(Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
+
+            log.info("First row? '{}'", rs.first()); //.first(): Dá um salto direto para a primeira linha.
+            log.info("Row number '{}'", rs.getRow());
+            log.info(Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
+
+            log.info("Row Absolute? '{}'", rs.absolute(2)); //.absolute(int row): Vai para uma linha específica.
+            log.info("Row number '{}'", rs.getRow());
+            log.info(Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
+
+            log.info("Row relative? '{}'", rs.relative(-1)); //.relative(int rows): Se move a partir de onde está agora. Ex: Se está na linha 2 e fizer ".relative(-1)", vai voltar para a linha 1.
+            log.info("Row number '{}'", rs.getRow());
+            log.info(Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
+
+            log.info("is last? '{}'", rs.isLast()); //.isLast(): Pergunta se está na última linha (Retorna true ou false).
+            log.info("Row number '{}'", rs.getRow());
+
+            log.info("is first? '{}'", rs.isFirst()); //.isFirst(): Pergunta se está na primeira linha.
+            log.info("Row number '{}'", rs.getRow());
+
+            log.info("Last row? '{}'", rs.last());
+            log.info("----------------------------");
+            //Para ir de baixo para cima.
+            rs.next();
+            log.info("After last row? '{}'", rs.isAfterLast());
+            while (rs.previous()){
+                log.info(Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
+            }
+        } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
+    }
 }
