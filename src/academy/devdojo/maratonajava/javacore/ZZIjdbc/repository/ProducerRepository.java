@@ -172,4 +172,30 @@ public class ProducerRepository {
             log.error("Error while trying to find all producer", e);
         }
     }
+
+    //Encontra um nome e atualiza para Maiuscula diretamente pelo Java com ResultSet (Sem precisar escrever nenhuma linha de comando SQL UPDATE ou DELETE para isso).
+    public static List<Producer> findByNameAndUpdateToUpperCase(String name) {
+        log.info("Finding Producer by name");
+        String sql = "SELECT * FROM anime_store.producer where name like '%%%s%%';"
+                .formatted(name);
+        List<Producer> producers = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                //updateString é usado junto com updateRow
+                rs.updateString("name", rs.getString("name").toUpperCase()); // Atualiza o ResultSet, pega a coluna name, pega o nome que tem nessa célula e deixa maiscula.
+                rs.updateRow(); //Pega na alteração feita na memória e envia para o MySQL atualizar a linha.
+                Producer producer = Producer
+                        .builder()
+                        .id(rs.getInt("id"))
+                        .name(rs.getString("name"))
+                        .build();
+                producers.add(producer);
+            }
+        } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
+        return producers;
+    }
 }
