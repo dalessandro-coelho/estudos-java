@@ -99,34 +99,34 @@ public class ProducerRepository {
     // Fazendo teste no Driver.
     public static void showDriveMetaData() {
         log.info("Showing Driver Metadata");
-        try (Connection conn = ConnectionFactory.getConnection()){
+        try (Connection conn = ConnectionFactory.getConnection()) {
             //DatabaseMetaData: Serve para perguntar diretamente ao driver se ele suporta determinados recursos avançados do JDBC antes de tentares usá-los e causar um erro no sistema.
-             DatabaseMetaData dbMetaData = conn.getMetaData();
+            DatabaseMetaData dbMetaData = conn.getMetaData();
 
-             //TYPE_FORWARD_ONLY: Determina que a leitura dos resultados de uma consulta ao banco de dados seja feita exclusivamente para a frente.
-             if(dbMetaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
+            //TYPE_FORWARD_ONLY: Determina que a leitura dos resultados de uma consulta ao banco de dados seja feita exclusivamente para a frente.
+            if (dbMetaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
                 log.info("Supports TYPE_FORWARD_ONLY");
                 if (dbMetaData.supportsResultSetConcurrency(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE)) {
                     log.info("And Supports CONCUR_UPDATABLE");
                 }
             }
 
-             //TYPE_SCROLL_INSENSITIVE: Permite navegar para a frente, para trás, saltar para o final ou ir para uma linha específica.
-             if(dbMetaData.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
+            //TYPE_SCROLL_INSENSITIVE: Permite navegar para a frente, para trás, saltar para o final ou ir para uma linha específica.
+            if (dbMetaData.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
                 log.info("Supports TYPE_SCROLL_INSENSITIVE");
                 if (dbMetaData.supportsResultSetConcurrency(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
                     log.info("And Supports CONCUR_UPDATABLE");
                 }
             }
 
-             //TYPE_SCROLL_SENSITIVE: Igual ao anterior, mas se outra pessoa alterar um dado no banco de dados enquanto tem ResultSet aberto, é possível conseguir ver a alteração em tempo real sem fazer um novo SELECT.
-             if(dbMetaData.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE)) {
+            //TYPE_SCROLL_SENSITIVE: Igual ao anterior, mas se outra pessoa alterar um dado no banco de dados enquanto tem ResultSet aberto, é possível conseguir ver a alteração em tempo real sem fazer um novo SELECT.
+            if (dbMetaData.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE)) {
                 log.info("Supports TYPE_SCROLL_SENSITIVE");
                 if (dbMetaData.supportsResultSetConcurrency(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
                     log.info("And Supports CONCUR_UPDATABLE");
                 }
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             log.error("Error while trying to find all producer", e);
         }
     }
@@ -165,7 +165,7 @@ public class ProducerRepository {
             //Para ir de baixo para cima.
             rs.next();
             log.info("After last row? '{}'", rs.isAfterLast());
-            while (rs.previous()){
+            while (rs.previous()) {
                 log.info(Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build());
             }
         } catch (SQLException e) {
@@ -185,6 +185,7 @@ public class ProducerRepository {
             while (rs.next()) {
                 //updateString é usado junto com updateRow
                 rs.updateString("name", rs.getString("name").toUpperCase()); // Atualiza o ResultSet, pega a coluna name, pega o nome que tem nessa célula e deixa maiscula.
+                //rs.cancelRowUpdates();
                 rs.updateRow(); //Pega na alteração feita na memória e envia para o MySQL atualizar a linha.
                 Producer producer = Producer
                         .builder()
@@ -197,5 +198,54 @@ public class ProducerRepository {
             log.error("Error while trying to find all producer", e);
         }
         return producers;
+    }
+
+    //Insere uma linha totalmente nova no banco de dados usando apenas o ResultSet(sem precisar escrever a query INSERT INTO).
+    public static List<Producer> findByNameAndInsertWhenNotFound(String name) {
+        log.info("Finding Producer by name");
+        String sql = "SELECT * FROM anime_store.producer where name like '%%%s%%';"
+                .formatted(name);
+        List<Producer> producers = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) return producers;
+
+            insertNewProducer(name, rs);
+
+            producers.add(getProducer(rs));
+        } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
+        return producers;
+    }
+
+    private static void insertNewProducer(String name, ResultSet rs) throws SQLException {
+        rs.moveToInsertRow(); //moveToInsertRow(): Tira o cursor das linhas atuais e move para a "linha de inserção"
+        rs.updateString("name", name);//updateString(): Preenche as colunas do novo registro. (Não precisa preencher o id se ele for gerado automaticamente no banco via AUTO_INCREMENT).
+        rs.insertRow(); //.insertRow(): É usado para inserir uma nova linha em um ResultSet atualizável e no banco de dados simultaneamente.
+    }
+
+    private static Producer getProducer(ResultSet rs) throws SQLException {
+        rs.beforeFirst();
+        rs.next();
+        return Producer.builder().id(rs.getInt("id")).name(rs.getString("name")).build();
+    }
+
+    //Econtra pelo nome e deleta
+    public static void findByNameAndDelete(String name) {
+        log.info("Finding Producer by name");
+        String sql = "SELECT * FROM anime_store.producer where name like '%%%s%%';"
+                .formatted(name);
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                log.info("Deleting '{}'", rs.getString("name"));
+                rs.deleteRow();
+            }
+        } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
     }
 }
