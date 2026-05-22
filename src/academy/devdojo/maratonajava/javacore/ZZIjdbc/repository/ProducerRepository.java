@@ -74,6 +74,36 @@ public class ProducerRepository {
         return producers;
     }
 
+    // Fazendo execução de forma segura.
+    public static List<Producer> findByNamePreparedStatement(String name) {
+        log.info("Finding Producer by name");
+        String sql = "SELECT * FROM anime_store.producer where name like ?;"; // ? (Ponto de interrogação): Representa um valor que será enviado depois, ou seja, placeholder (espaço reservado).
+        List<Producer> producers = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             //PreparedStatement: Permite enviar valores de forma segura para o SQL, evitando que esses valores sejam interpretados como comandos SQL, ou seja, algum usuario consiga bagunçar o SQL(SQL INJECTION).
+             PreparedStatement ps = createPreparedStatement(conn, sql, name);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Producer producer = Producer
+                        .builder()
+                        .id(rs.getInt("id"))
+                        .name(rs.getString("name"))
+                        .build();
+                producers.add(producer);
+            }
+        } catch (SQLException e) {
+            log.error("Error while trying to find all producer", e);
+        }
+        return producers;
+    }
+
+    private static PreparedStatement createPreparedStatement(Connection conn, String sql, String name) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + name + "%");
+        return ps;
+    }
+
     //Descobrindo propriedades de uma tabela.
     public static void showProducerMetaData() {
         log.info("Showing Producer Metadata");
