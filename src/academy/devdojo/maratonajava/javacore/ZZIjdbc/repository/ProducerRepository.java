@@ -46,6 +46,27 @@ public class ProducerRepository {
         }
     }
 
+    //Atualização de forma segura
+    public static void updatePreparedStatement(Producer producer) {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = preparedStatementUpdate(conn, producer)) {
+            int rowsAffected = ps.executeUpdate();
+            log.info("Update producer '{}', rows affected '{}'", producer.getId(), rowsAffected);
+        } catch (SQLException e) {
+            log.error("Error while trying to update producer '{}'", producer.getId(), e);
+        }
+    }
+
+    private static PreparedStatement preparedStatementUpdate(Connection conn, Producer producer) throws SQLException {
+        String sql = "UPDATE `anime_store`.`producer` SET `name` = ? WHERE (`id` = ?);";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        //A contagem dos "?" segue estritamente a ordem em que aparecem na String SQL (da esquerda para a direita, começando em 1).
+        // Se os trocar, vais tentar enfiar um texto onde o banco espera um número, causando um erro.
+        ps.setString(1, producer.getName()); // Primeiro '?' é o nome
+        ps.setInt(2, producer.getId()); // Segundo '?' é o ID
+        return ps;
+    }
+
     public static List<Producer> findAll() {
         log.info("Finding all Producers");
         return findByName("");
@@ -81,7 +102,7 @@ public class ProducerRepository {
         List<Producer> producers = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection();
              //PreparedStatement: Permite enviar valores de forma segura para o SQL, evitando que esses valores sejam interpretados como comandos SQL, ou seja, algum usuario consiga bagunçar o SQL(SQL INJECTION).
-             PreparedStatement ps = createPreparedStatement(conn, sql, name);
+             PreparedStatement ps = preparedStatementFindByName(conn, name);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -98,9 +119,10 @@ public class ProducerRepository {
         return producers;
     }
 
-    private static PreparedStatement createPreparedStatement(Connection conn, String sql, String name) throws SQLException {
+    private static PreparedStatement preparedStatementFindByName(Connection conn, String name) throws SQLException {
+        String sql = "SELECT * FROM anime_store.producer where name like ?;";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, "%" + name + "%");
+        ps.setString(1, String.format("%%%s%%", name));
         return ps;
     }
 
