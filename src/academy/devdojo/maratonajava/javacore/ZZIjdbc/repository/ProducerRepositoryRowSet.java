@@ -4,12 +4,14 @@ import academy.devdojo.maratonajava.javacore.ZZIjdbc.com.ConnectionFactory;
 import academy.devdojo.maratonajava.javacore.ZZIjdbc.dominio.Producer;
 import academy.devdojo.maratonajava.javacore.ZZIjdbc.listener.CustomRowSetListener;
 
+import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.JdbcRowSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ProducerRepositoryRowSet {
     public static List<Producer> findByNameJdbcRowSet(String name) {
@@ -66,6 +68,30 @@ public class ProducerRepositoryRowSet {
             jrs.updateString("name", producer.getName());
             jrs.updateRow();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateCachedRowSet(Producer producer) {
+        //CachedRowSet: Copia os dados do banco para memória e depois fecha a conexão.
+        // Faz mudanças localmente (as alterações acontecem só na memória do programa, ainda NÃO foram para o banco) e depois sincroniza.
+        // 1. busca dados
+        // 2. copia tudo pra memória
+        // 3. fecha conexão
+
+        String sql = "SELECT * FROM producer WHERE (`id` = ?);";
+        try (CachedRowSet crs = ConnectionFactory.getCachedRowSet();
+             Connection connection = ConnectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            crs.setCommand(sql);
+            crs.setInt(1, producer.getId());
+            crs.execute(connection); // conecta - pega dados - salva em memória - desconecta
+            if (!crs.next()) return;
+            crs.updateString("name", producer.getName());
+            crs.updateRow();
+            TimeUnit.SECONDS.sleep(10);
+            crs.acceptChanges(); //Para salvar no banco.
+        } catch (SQLException | InterruptedException e) {
             e.printStackTrace();
         }
     }
