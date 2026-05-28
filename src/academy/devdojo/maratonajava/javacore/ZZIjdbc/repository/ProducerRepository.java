@@ -21,6 +21,39 @@ public class ProducerRepository {
         }
     }
 
+    //Uma transação serve para agrupar comandos SQL. Ou todos funcionam com sucesso, ou o banco desfaz tudo e volta ao estado original.
+    public static void saveTransaction(List<Producer> producers) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            conn.setAutoCommit(false); //Desliga o salvamento automático
+            preparedStatementSaveTransaction(conn, producers);
+            conn.commit(); //Se chegou aqui sem erros, consolida no banco
+            conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            log.error("Error while trying to save producers '{}'", producers, e);
+        }
+    }
+
+    private static void preparedStatementSaveTransaction(Connection conn, List<Producer> producers) throws SQLException {
+        String sql = "INSERT INTO `anime_store`.`producer` (`name`) VALUES ( ? );";
+        boolean shouldRollback = false;
+        for (Producer p : producers) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                log.info("Saving producer '{}'", p.getName());
+                ps.setString(1, p.getName());
+//                if (p.getName().equals("White fox")) throw new SQLException("Can't save white fox");
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                shouldRollback = true; //Se falhar ou lançar exceção, meio que vai cancelar e fingir que nada aconteceu.
+            }
+        }
+
+        if(shouldRollback) {
+            log.warn("Transaction is going be rollback");
+            conn.rollback();
+        }
+    }
+
     // Segue a mesma estrutura anterior, entretando agora vai remover (por id).
     public static void delete(int id) {
         String sql = "DELETE FROM `anime_store`.`producer` WHERE (`id` = '%d');".formatted(id); //Comando para deletar por id
