@@ -3,19 +3,19 @@ package academy.devdojo.maratonajava.javacore.ZZJcrud.service;
 import academy.devdojo.maratonajava.javacore.ZZJcrud.dominio.Producer;
 import academy.devdojo.maratonajava.javacore.ZZJcrud.repository.ProducerRepository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
 public class ProducerService {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
 
-    public static void buildMenu(int op){
+    public static void  menu(int op) {
         switch (op) {
             case 1:
                 findByName();
+                break;
+            case 2: //Opção de apagar
+                delete();
                 break;
             default:
                 throw new IllegalArgumentException("Not a valid option");
@@ -23,12 +23,24 @@ public class ProducerService {
     }
 
     //Busca por nome e lista.
-    private static void findByName(){
+    private static void findByName() {
         System.out.println("Type the name or empty to all");
-        String name = scanner.nextLine();
+        String name = SCANNER.nextLine();
         List<Producer> producers = ProducerRepository.findByName(name);
-        for (int i = 0; i < producers.size(); i++){
-            System.out.printf("[%d] - %s%n", i, producers.get(i).getName());
+        for (int i = 0; i < producers.size(); i++) {
+            Producer producer = producers.get(i);
+            System.out.printf("[%d] - %d | %s%n", i, producer.getId(), producer.getName());
+        }
+    }
+
+    //Pede para introduzir o ID do produtor que deseja remover.
+    private static void delete() {
+        System.out.println("Type the id of the producer you want to delete");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        System.out.println("Are you sure? S/N");
+        String choice = SCANNER.nextLine();
+        if ("s".equalsIgnoreCase(choice)) {
+            ProducerRepository.delete(id);
         }
     }
 }
