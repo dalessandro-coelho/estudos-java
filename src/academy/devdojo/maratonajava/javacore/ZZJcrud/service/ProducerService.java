@@ -3,16 +3,18 @@ package academy.devdojo.maratonajava.javacore.ZZJcrud.service;
 import academy.devdojo.maratonajava.javacore.ZZJcrud.dominio.Producer;
 import academy.devdojo.maratonajava.javacore.ZZJcrud.repository.ProducerRepository;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ProducerService {
     private static final Scanner SCANNER = new Scanner(System.in);
 
-    public static void  menu(int op) {
+    public static void menu(int op) {
         switch (op) {
             case 1 -> findByName();
             case 2 -> delete();
             case 3 -> save();
+            case 4 -> update();
             default -> throw new IllegalArgumentException("Not a valid option");
         }
     }
@@ -22,7 +24,7 @@ public class ProducerService {
         System.out.println("Type the name or empty to all");
         String name = SCANNER.nextLine();
         ProducerRepository.findByName(name)
-                        .forEach(p -> System.out.printf("[%d] - %s%n", p.getId(), p.getName()));
+                .forEach(p -> System.out.printf("[%d] - %s%n", p.getId(), p.getName()));
     }
 
     //Pede para introduzir o ID do produtor que deseja remover.
@@ -44,5 +46,31 @@ public class ProducerService {
         // só precisa passar o nome para o Builder.
         Producer producer = Producer.builder().name(name).build();
         ProducerRepository.save(producer);
+    }
+
+    /*
+        O sistema pede o ID do registo que deseja alterar.
+        O sistema faz uma busca rápida (ou assume que o utilizador sabe o que está a fazer) e pede o Novo Nome para aquele registo.
+        O Java monta o objeto Producer contendo o ID digitado e o novo nome, enviando-o para a base de dados.
+    */
+    private static void update() {
+        System.out.println("Type the id of the object you want to update");
+        Optional<Producer> producerOptional = ProducerRepository.findById(Integer.parseInt(SCANNER.nextLine()));
+        if (producerOptional.isEmpty()) {
+            System.out.println("Producer not found");
+            return;
+        }
+        Producer producerFromDb = producerOptional.get();
+        System.out.println("Producer found " + producerFromDb);
+        System.out.println("Type the new name or enter to keep the same");
+        String name = SCANNER.nextLine();
+        name = name.isEmpty() ? producerFromDb.getName() : name;
+
+        Producer producerToUpdate = Producer.builder()
+                .id(producerFromDb.getId())
+                .name(name)
+                .build();
+
+        ProducerRepository.update(producerToUpdate);
     }
 }
